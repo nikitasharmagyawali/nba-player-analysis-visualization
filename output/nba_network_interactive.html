@@ -1,0 +1,288 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 820px;
+                 background-color: #1b1b1b;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+    <style>
+      body {
+        background-color: #1b1b1b;
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .header {
+        text-align: center;
+        padding: 14px 10px 6px 10px;
+      }
+
+      .title {
+        color: white;
+        font-size: 30px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .subtitle {
+        color: #cccccc;
+        font-size: 13px;
+        margin-bottom: 6px;
+      }
+
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        font-size: 12px;
+        color: #eaeaea;
+        padding-bottom: 6px;
+      }
+
+      .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        opacity: 0.95;
+      }
+
+      .swatch {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        display: inline-block;
+      }
+
+      /* keep header visible by pushing network down slightly */
+      #mynetwork {
+        margin-top: 8px;
+      }
+    </style>
+
+    <div class="header">
+        <div class="title">NBA Top 50 player network</div>
+        <div class="subtitle">Nodes colored by Louvain communities, size by Avg PTS/36, edges weighted by shared seasons</div>
+        <div class="legend">
+        <span class="legend-item">
+            <span class="swatch" style="background:rgb(31,119,180);"></span>
+            Community 1
+        </span>
+        
+        <span class="legend-item">
+            <span class="swatch" style="background:rgb(174,199,232);"></span>
+            Community 2
+        </span>
+        
+        <span class="legend-item">
+            <span class="swatch" style="background:rgb(255,127,14);"></span>
+            Community 3
+        </span>
+        
+        <span class="legend-item">
+            <span class="swatch" style="background:rgb(255,187,120);"></span>
+            Community 4
+        </span>
+        
+        <span class="legend-item">
+            <span class="swatch" style="background:rgb(44,160,44);"></span>
+            Community 5
+        </span>
+        
+        <span class="legend-item">
+            <span class="swatch" style="background:rgb(152,223,138);"></span>
+            Community 6
+        </span>
+        
+        <span class="legend-item">
+            <span class="swatch" style="background:rgb(214,39,40);"></span>
+            Community 7
+        </span>
+        
+        <span class="legend-item">
+            <span class="swatch" style="background:rgb(255,152,150);"></span>
+            Community 8
+        </span>
+        
+        <span class="legend-item">
+            <span class="swatch" style="background:rgb(148,103,189);"></span>
+            Community 9
+        </span>
+        
+        <span class="legend-item">
+            <span class="swatch" style="background:rgb(197,176,213);"></span>
+            Community 10
+        </span>
+        
+        <span class="legend-item">
+            <span class="swatch" style="background:rgb(140,86,75);"></span>
+            Community 11
+        </span>
+        </div>
+    </div>
+    
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"borderColor": "white", "borderWidth": 2, "color": "rgb(255,187,120)", "font": {"color": "white"}, "id": "Anthony Davis", "label": "Anthony Davis", "shadow": true, "shape": "dot", "title": "\u003cb\u003eAnthony Davis\u003c/b\u003e\u003cbr\u003eTotal Games: 346\u003cbr\u003eAvg PTS/36: 25.2\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: NOP\u003cbr\u003eCommunity: 4", "value": 17}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(174,199,232)", "font": {"color": "white"}, "id": "Blake Griffin", "label": "Blake Griffin", "shadow": true, "shape": "dot", "title": "\u003cb\u003eBlake Griffin\u003c/b\u003e\u003cbr\u003eTotal Games: 359\u003cbr\u003eAvg PTS/36: 22.9\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: LAC\u003cbr\u003eCommunity: 2", "value": 16}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(174,199,232)", "font": {"color": "white"}, "id": "Boban Marjanovi\u0107", "label": "Boban Marjanovi\u0107", "shadow": true, "shape": "dot", "title": "\u003cb\u003eBoban Marjanovi\u0107\u003c/b\u003e\u003cbr\u003eTotal Games: 167\u003cbr\u003eAvg PTS/36: 24.0\u003cbr\u003eSeasons Played: 3\u003cbr\u003eMain Team: DET\u003cbr\u003eCommunity: 2", "value": 16}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(152,223,138)", "font": {"color": "white"}, "id": "Brook Lopez", "label": "Brook Lopez", "shadow": true, "shape": "dot", "title": "\u003cb\u003eBrook Lopez\u003c/b\u003e\u003cbr\u003eTotal Games: 311\u003cbr\u003eAvg PTS/36: 22.4\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: BRK\u003cbr\u003eCommunity: 6", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(255,152,150)", "font": {"color": "white"}, "id": "Carmelo Anthony", "label": "Carmelo Anthony", "shadow": true, "shape": "dot", "title": "\u003cb\u003eCarmelo Anthony\u003c/b\u003e\u003cbr\u003eTotal Games: 341\u003cbr\u003eAvg PTS/36: 22.8\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: NYK\u003cbr\u003eCommunity: 8", "value": 16}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(174,199,232)", "font": {"color": "white"}, "id": "Chris Paul", "label": "Chris Paul", "shadow": true, "shape": "dot", "title": "\u003cb\u003eChris Paul\u003c/b\u003e\u003cbr\u003eTotal Games: 337\u003cbr\u003eAvg PTS/36: 20.5\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: LAC\u003cbr\u003eCommunity: 2", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(152,223,138)", "font": {"color": "white"}, "id": "Coty Clarke", "label": "Coty Clarke", "shadow": true, "shape": "dot", "title": "\u003cb\u003eCoty Clarke\u003c/b\u003e\u003cbr\u003eTotal Games: 3\u003cbr\u003eAvg PTS/36: 36.0\u003cbr\u003eSeasons Played: 1\u003cbr\u003eMain Team: BOS\u003cbr\u003eCommunity: 6", "value": 21}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(174,199,232)", "font": {"color": "white"}, "id": "Damian Lillard", "label": "Damian Lillard", "shadow": true, "shape": "dot", "title": "\u003cb\u003eDamian Lillard\u003c/b\u003e\u003cbr\u003eTotal Games: 387\u003cbr\u003eAvg PTS/36: 24.2\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: POR\u003cbr\u003eCommunity: 2", "value": 16}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(255,187,120)", "font": {"color": "white"}, "id": "David Stockton", "label": "David Stockton", "shadow": true, "shape": "dot", "title": "\u003cb\u003eDavid Stockton\u003c/b\u003e\u003cbr\u003eTotal Games: 6\u003cbr\u003eAvg PTS/36: 24.4\u003cbr\u003eSeasons Played: 2\u003cbr\u003eMain Team: UTA\u003cbr\u003eCommunity: 4", "value": 16}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(174,199,232)", "font": {"color": "white"}, "id": "DeMar DeRozan", "label": "DeMar DeRozan", "shadow": true, "shape": "dot", "title": "\u003cb\u003eDeMar DeRozan\u003c/b\u003e\u003cbr\u003eTotal Games: 371\u003cbr\u003eAvg PTS/36: 23.5\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: TOR\u003cbr\u003eCommunity: 2", "value": 16}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(255,187,120)", "font": {"color": "white"}, "id": "DeMarcus Cousins", "label": "DeMarcus Cousins", "shadow": true, "shape": "dot", "title": "\u003cb\u003eDeMarcus Cousins\u003c/b\u003e\u003cbr\u003eTotal Games: 387\u003cbr\u003eAvg PTS/36: 26.8\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: SAC\u003cbr\u003eCommunity: 4", "value": 17}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(152,223,138)", "font": {"color": "white"}, "id": "Devin Booker", "label": "Devin Booker", "shadow": true, "shape": "dot", "title": "\u003cb\u003eDevin Booker\u003c/b\u003e\u003cbr\u003eTotal Games: 208\u003cbr\u003eAvg PTS/36: 22.2\u003cbr\u003eSeasons Played: 3\u003cbr\u003eMain Team: PHO\u003cbr\u003eCommunity: 6", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(148,103,189)", "font": {"color": "white"}, "id": "Dirk Nowitzki", "label": "Dirk Nowitzki", "shadow": true, "shape": "dot", "title": "\u003cb\u003eDirk Nowitzki\u003c/b\u003e\u003cbr\u003eTotal Games: 363\u003cbr\u003eAvg PTS/36: 20.5\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: DAL\u003cbr\u003eCommunity: 9", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(255,187,120)", "font": {"color": "white"}, "id": "Donovan Mitchell", "label": "Donovan Mitchell", "shadow": true, "shape": "dot", "title": "\u003cb\u003eDonovan Mitchell\u003c/b\u003e\u003cbr\u003eTotal Games: 79\u003cbr\u003eAvg PTS/36: 22.1\u003cbr\u003eSeasons Played: 1\u003cbr\u003eMain Team: UTA\u003cbr\u003eCommunity: 4", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(152,223,138)", "font": {"color": "white"}, "id": "Dwyane Wade", "label": "Dwyane Wade", "shadow": true, "shape": "dot", "title": "\u003cb\u003eDwyane Wade\u003c/b\u003e\u003cbr\u003eTotal Games: 384\u003cbr\u003eAvg PTS/36: 20.6\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: MIA\u003cbr\u003eCommunity: 6", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(197,176,213)", "font": {"color": "white"}, "id": "Edmond Sumner", "label": "Edmond Sumner", "shadow": true, "shape": "dot", "title": "\u003cb\u003eEdmond Sumner\u003c/b\u003e\u003cbr\u003eTotal Games: 1\u003cbr\u003eAvg PTS/36: 36.0\u003cbr\u003eSeasons Played: 1\u003cbr\u003eMain Team: IND\u003cbr\u003eCommunity: 10", "value": 21}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(255,152,150)", "font": {"color": "white"}, "id": "Enes Freedom", "label": "Enes Freedom", "shadow": true, "shape": "dot", "title": "\u003cb\u003eEnes Freedom\u003c/b\u003e\u003cbr\u003eTotal Games: 455\u003cbr\u003eAvg PTS/36: 20.3\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: OKC\u003cbr\u003eCommunity: 8", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(152,223,138)", "font": {"color": "white"}, "id": "Eric Bledsoe", "label": "Eric Bledsoe", "shadow": true, "shape": "dot", "title": "\u003cb\u003eEric Bledsoe\u003c/b\u003e\u003cbr\u003eTotal Games: 369\u003cbr\u003eAvg PTS/36: 20.4\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: PHO\u003cbr\u003eCommunity: 6", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(152,223,138)", "font": {"color": "white"}, "id": "Isaiah Thomas", "label": "Isaiah Thomas", "shadow": true, "shape": "dot", "title": "\u003cb\u003eIsaiah Thomas\u003c/b\u003e\u003cbr\u003eTotal Games: 428\u003cbr\u003eAvg PTS/36: 23.1\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: BOS\u003cbr\u003eCommunity: 6", "value": 16}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(148,103,189)", "font": {"color": "white"}, "id": "Jameel Warney", "label": "Jameel Warney", "shadow": true, "shape": "dot", "title": "\u003cb\u003eJameel Warney\u003c/b\u003e\u003cbr\u003eTotal Games: 3\u003cbr\u003eAvg PTS/36: 22.7\u003cbr\u003eSeasons Played: 1\u003cbr\u003eMain Team: DAL\u003cbr\u003eCommunity: 9", "value": 16}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(174,199,232)", "font": {"color": "white"}, "id": "James Harden", "label": "James Harden", "shadow": true, "shape": "dot", "title": "\u003cb\u003eJames Harden\u003c/b\u003e\u003cbr\u003eTotal Games: 389\u003cbr\u003eAvg PTS/36: 27.6\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: HOU\u003cbr\u003eCommunity: 2", "value": 17}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(31,119,180)", "font": {"color": "white"}, "id": "Jannero Pargo", "label": "Jannero Pargo", "shadow": true, "shape": "dot", "title": "\u003cb\u003eJannero Pargo\u003c/b\u003e\u003cbr\u003eTotal Games: 38\u003cbr\u003eAvg PTS/36: 20.2\u003cbr\u003eSeasons Played: 2\u003cbr\u003eMain Team: CHO\u003cbr\u003eCommunity: 1", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(255,187,120)", "font": {"color": "white"}, "id": "Jimmer Fredette", "label": "Jimmer Fredette", "shadow": true, "shape": "dot", "title": "\u003cb\u003eJimmer Fredette\u003c/b\u003e\u003cbr\u003eTotal Games: 160\u003cbr\u003eAvg PTS/36: 20.7\u003cbr\u003eSeasons Played: 3\u003cbr\u003eMain Team: 2TM\u003cbr\u003eCommunity: 4", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(255,127,14)", "font": {"color": "white"}, "id": "Joel Embiid", "label": "Joel Embiid", "shadow": true, "shape": "dot", "title": "\u003cb\u003eJoel Embiid\u003c/b\u003e\u003cbr\u003eTotal Games: 94\u003cbr\u003eAvg PTS/36: 27.9\u003cbr\u003eSeasons Played: 2\u003cbr\u003eMain Team: PHI\u003cbr\u003eCommunity: 3", "value": 18}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(148,103,189)", "font": {"color": "white"}, "id": "Jonathan Gibson", "label": "Jonathan Gibson", "shadow": true, "shape": "dot", "title": "\u003cb\u003eJonathan Gibson\u003c/b\u003e\u003cbr\u003eTotal Games: 21\u003cbr\u003eAvg PTS/36: 23.6\u003cbr\u003eSeasons Played: 2\u003cbr\u003eMain Team: BOS\u003cbr\u003eCommunity: 9", "value": 16}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(44,160,44)", "font": {"color": "white"}, "id": "Karl-Anthony Towns", "label": "Karl-Anthony Towns", "shadow": true, "shape": "dot", "title": "\u003cb\u003eKarl-Anthony Towns\u003c/b\u003e\u003cbr\u003eTotal Games: 246\u003cbr\u003eAvg PTS/36: 22.2\u003cbr\u003eSeasons Played: 3\u003cbr\u003eMain Team: MIN\u003cbr\u003eCommunity: 5", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(174,199,232)", "font": {"color": "white"}, "id": "Kawhi Leonard", "label": "Kawhi Leonard", "shadow": true, "shape": "dot", "title": "\u003cb\u003eKawhi Leonard\u003c/b\u003e\u003cbr\u003eTotal Games: 285\u003cbr\u003eAvg PTS/36: 22.0\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: SAS\u003cbr\u003eCommunity: 2", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(31,119,180)", "font": {"color": "white"}, "id": "Kemba Walker", "label": "Kemba Walker", "shadow": true, "shape": "dot", "title": "\u003cb\u003eKemba Walker\u003c/b\u003e\u003cbr\u003eTotal Games: 375\u003cbr\u003eAvg PTS/36: 20.9\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: CHO\u003cbr\u003eCommunity: 1", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(255,152,150)", "font": {"color": "white"}, "id": "Kevin Durant", "label": "Kevin Durant", "shadow": true, "shape": "dot", "title": "\u003cb\u003eKevin Durant\u003c/b\u003e\u003cbr\u003eTotal Games: 310\u003cbr\u003eAvg PTS/36: 28.0\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: OKC\u003cbr\u003eCommunity: 8", "value": 18}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(152,223,138)", "font": {"color": "white"}, "id": "Kevin Love", "label": "Kevin Love", "shadow": true, "shape": "dot", "title": "\u003cb\u003eKevin Love\u003c/b\u003e\u003cbr\u003eTotal Games: 348\u003cbr\u003eAvg PTS/36: 21.2\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: CLE\u003cbr\u003eCommunity: 6", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(214,39,40)", "font": {"color": "white"}, "id": "Klay Thompson", "label": "Klay Thompson", "shadow": true, "shape": "dot", "title": "\u003cb\u003eKlay Thompson\u003c/b\u003e\u003cbr\u003eTotal Games: 389\u003cbr\u003eAvg PTS/36: 22.4\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: GSW\u003cbr\u003eCommunity: 7", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(174,199,232)", "font": {"color": "white"}, "id": "Kobe Bryant", "label": "Kobe Bryant", "shadow": true, "shape": "dot", "title": "\u003cb\u003eKobe Bryant\u003c/b\u003e\u003cbr\u003eTotal Games: 107\u003cbr\u003eAvg PTS/36: 20.9\u003cbr\u003eSeasons Played: 3\u003cbr\u003eMain Team: LAL\u003cbr\u003eCommunity: 2", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(255,152,150)", "font": {"color": "white"}, "id": "Kristaps Porzi\u0146\u0123is", "label": "Kristaps Porzi\u0146\u0123is", "shadow": true, "shape": "dot", "title": "\u003cb\u003eKristaps Porzi\u0146\u0123is\u003c/b\u003e\u003cbr\u003eTotal Games: 186\u003cbr\u003eAvg PTS/36: 21.1\u003cbr\u003eSeasons Played: 3\u003cbr\u003eMain Team: NYK\u003cbr\u003eCommunity: 8", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(152,223,138)", "font": {"color": "white"}, "id": "Kyrie Irving", "label": "Kyrie Irving", "shadow": true, "shape": "dot", "title": "\u003cb\u003eKyrie Irving\u003c/b\u003e\u003cbr\u003eTotal Games: 331\u003cbr\u003eAvg PTS/36: 23.7\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: CLE\u003cbr\u003eCommunity: 6", "value": 16}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(174,199,232)", "font": {"color": "white"}, "id": "LaMarcus Aldridge", "label": "LaMarcus Aldridge", "shadow": true, "shape": "dot", "title": "\u003cb\u003eLaMarcus Aldridge\u003c/b\u003e\u003cbr\u003eTotal Games: 361\u003cbr\u003eAvg PTS/36: 22.4\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: SAS\u003cbr\u003eCommunity: 2", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(152,223,138)", "font": {"color": "white"}, "id": "LeBron James", "label": "LeBron James", "shadow": true, "shape": "dot", "title": "\u003cb\u003eLeBron James\u003c/b\u003e\u003cbr\u003eTotal Games: 378\u003cbr\u003eAvg PTS/36: 25.7\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: CLE\u003cbr\u003eCommunity: 6", "value": 17}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(174,199,232)", "font": {"color": "white"}, "id": "Lou Williams", "label": "Lou Williams", "shadow": true, "shape": "dot", "title": "\u003cb\u003eLou Williams\u003c/b\u003e\u003cbr\u003eTotal Games: 448\u003cbr\u003eAvg PTS/36: 22.3\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: LAL\u003cbr\u003eCommunity: 2", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(214,39,40)", "font": {"color": "white"}, "id": "MarShon Brooks", "label": "MarShon Brooks", "shadow": true, "shape": "dot", "title": "\u003cb\u003eMarShon Brooks\u003c/b\u003e\u003cbr\u003eTotal Games: 77\u003cbr\u003eAvg PTS/36: 21.8\u003cbr\u003eSeasons Played: 2\u003cbr\u003eMain Team: MEM\u003cbr\u003eCommunity: 7", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(214,39,40)", "font": {"color": "white"}, "id": "Marreese Speights", "label": "Marreese Speights", "shadow": true, "shape": "dot", "title": "\u003cb\u003eMarreese Speights\u003c/b\u003e\u003cbr\u003eTotal Games: 361\u003cbr\u003eAvg PTS/36: 21.1\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: GSW\u003cbr\u003eCommunity: 7", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(152,223,138)", "font": {"color": "white"}, "id": "Michael Beasley", "label": "Michael Beasley", "shadow": true, "shape": "dot", "title": "\u003cb\u003eMichael Beasley\u003c/b\u003e\u003cbr\u003eTotal Games: 229\u003cbr\u003eAvg PTS/36: 20.2\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: MIA\u003cbr\u003eCommunity: 6", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(255,187,120)", "font": {"color": "white"}, "id": "Naz Mitrou-Long", "label": "Naz Mitrou-Long", "shadow": true, "shape": "dot", "title": "\u003cb\u003eNaz Mitrou-Long\u003c/b\u003e\u003cbr\u003eTotal Games: 1\u003cbr\u003eAvg PTS/36: 108.0\u003cbr\u003eSeasons Played: 1\u003cbr\u003eMain Team: UTA\u003cbr\u003eCommunity: 4", "value": 50}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(255,152,150)", "font": {"color": "white"}, "id": "PJ Dozier", "label": "PJ Dozier", "shadow": true, "shape": "dot", "title": "\u003cb\u003ePJ Dozier\u003c/b\u003e\u003cbr\u003eTotal Games: 2\u003cbr\u003eAvg PTS/36: 24.0\u003cbr\u003eSeasons Played: 1\u003cbr\u003eMain Team: OKC\u003cbr\u003eCommunity: 8", "value": 16}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(255,152,150)", "font": {"color": "white"}, "id": "Paul George", "label": "Paul George", "shadow": true, "shape": "dot", "title": "\u003cb\u003ePaul George\u003c/b\u003e\u003cbr\u003eTotal Games: 321\u003cbr\u003eAvg PTS/36: 22.4\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: IND\u003cbr\u003eCommunity: 8", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(255,152,150)", "font": {"color": "white"}, "id": "Russell Westbrook", "label": "Russell Westbrook", "shadow": true, "shape": "dot", "title": "\u003cb\u003eRussell Westbrook\u003c/b\u003e\u003cbr\u003eTotal Games: 354\u003cbr\u003eAvg PTS/36: 27.5\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: OKC\u003cbr\u003eCommunity: 8", "value": 17}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(255,127,14)", "font": {"color": "white"}, "id": "Shawn Long", "label": "Shawn Long", "shadow": true, "shape": "dot", "title": "\u003cb\u003eShawn Long\u003c/b\u003e\u003cbr\u003eTotal Games: 18\u003cbr\u003eAvg PTS/36: 22.8\u003cbr\u003eSeasons Played: 1\u003cbr\u003eMain Team: PHI\u003cbr\u003eCommunity: 3", "value": 16}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(255,187,120)", "font": {"color": "white"}, "id": "Sim Bhullar", "label": "Sim Bhullar", "shadow": true, "shape": "dot", "title": "\u003cb\u003eSim Bhullar\u003c/b\u003e\u003cbr\u003eTotal Games: 3\u003cbr\u003eAvg PTS/36: 24.0\u003cbr\u003eSeasons Played: 1\u003cbr\u003eMain Team: SAC\u003cbr\u003eCommunity: 4", "value": 16}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(214,39,40)", "font": {"color": "white"}, "id": "Stephen Curry", "label": "Stephen Curry", "shadow": true, "shape": "dot", "title": "\u003cb\u003eStephen Curry\u003c/b\u003e\u003cbr\u003eTotal Games: 367\u003cbr\u003eAvg PTS/36: 27.7\u003cbr\u003eSeasons Played: 5\u003cbr\u003eMain Team: GSW\u003cbr\u003eCommunity: 7", "value": 18}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(255,152,150)", "font": {"color": "white"}, "id": "Thanasis Antetokounmpo", "label": "Thanasis Antetokounmpo", "shadow": true, "shape": "dot", "title": "\u003cb\u003eThanasis Antetokounmpo\u003c/b\u003e\u003cbr\u003eTotal Games: 2\u003cbr\u003eAvg PTS/36: 36.0\u003cbr\u003eSeasons Played: 1\u003cbr\u003eMain Team: NYK\u003cbr\u003eCommunity: 8", "value": 21}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(140,86,75)", "font": {"color": "white"}, "id": "Tyrus Thomas", "label": "Tyrus Thomas", "shadow": true, "shape": "dot", "title": "\u003cb\u003eTyrus Thomas\u003c/b\u003e\u003cbr\u003eTotal Games: 2\u003cbr\u003eAvg PTS/36: 20.6\u003cbr\u003eSeasons Played: 1\u003cbr\u003eMain Team: MEM\u003cbr\u003eCommunity: 11", "value": 15}, {"borderColor": "white", "borderWidth": 2, "color": "rgb(214,39,40)", "font": {"color": "white"}, "id": "Vince Hunter", "label": "Vince Hunter", "shadow": true, "shape": "dot", "title": "\u003cb\u003eVince Hunter\u003c/b\u003e\u003cbr\u003eTotal Games: 4\u003cbr\u003eAvg PTS/36: 30.9\u003cbr\u003eSeasons Played: 1\u003cbr\u003eMain Team: MEM\u003cbr\u003eCommunity: 7", "value": 19}]);
+                  edges = new vis.DataSet([{"color": "rgba(255,215,0,0.6)", "from": "Anthony Davis", "title": "Shared Seasons: 2", "to": "DeMarcus Cousins", "value": 2}, {"color": "rgba(255,215,0,0.6)", "from": "Anthony Davis", "title": "Shared Seasons: 2", "to": "Jimmer Fredette", "value": 2}, {"color": "rgba(255,215,0,0.6)", "from": "Blake Griffin", "title": "Shared Seasons: 3", "to": "Boban Marjanovi\u0107", "value": 3}, {"color": "rgba(255,215,0,0.6)", "from": "Blake Griffin", "title": "Shared Seasons: 4", "to": "Chris Paul", "value": 4}, {"color": "rgba(255,215,0,0.6)", "from": "Blake Griffin", "title": "Shared Seasons: 1", "to": "Dwyane Wade", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Blake Griffin", "title": "Shared Seasons: 1", "to": "Eric Bledsoe", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Blake Griffin", "title": "Shared Seasons: 1", "to": "Isaiah Thomas", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Blake Griffin", "title": "Shared Seasons: 1", "to": "Lou Williams", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Blake Griffin", "title": "Shared Seasons: 1", "to": "Marreese Speights", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Boban Marjanovi\u0107", "title": "Shared Seasons: 1", "to": "Dwyane Wade", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Boban Marjanovi\u0107", "title": "Shared Seasons: 1", "to": "Eric Bledsoe", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Boban Marjanovi\u0107", "title": "Shared Seasons: 1", "to": "Isaiah Thomas", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Boban Marjanovi\u0107", "title": "Shared Seasons: 1", "to": "Kawhi Leonard", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Boban Marjanovi\u0107", "title": "Shared Seasons: 1", "to": "LaMarcus Aldridge", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Boban Marjanovi\u0107", "title": "Shared Seasons: 1", "to": "Lou Williams", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Brook Lopez", "title": "Shared Seasons: 1", "to": "Isaiah Thomas", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Carmelo Anthony", "title": "Shared Seasons: 1", "to": "Jimmer Fredette", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Carmelo Anthony", "title": "Shared Seasons: 2", "to": "Kristaps Porzi\u0146\u0123is", "value": 2}, {"color": "rgba(255,215,0,0.6)", "from": "Carmelo Anthony", "title": "Shared Seasons: 1", "to": "PJ Dozier", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Carmelo Anthony", "title": "Shared Seasons: 1", "to": "Paul George", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Carmelo Anthony", "title": "Shared Seasons: 1", "to": "Russell Westbrook", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Carmelo Anthony", "title": "Shared Seasons: 1", "to": "Thanasis Antetokounmpo", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Chris Paul", "title": "Shared Seasons: 1", "to": "James Harden", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Chris Paul", "title": "Shared Seasons: 1", "to": "Marreese Speights", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Coty Clarke", "title": "Shared Seasons: 1", "to": "Isaiah Thomas", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Damian Lillard", "title": "Shared Seasons: 2", "to": "LaMarcus Aldridge", "value": 2}, {"color": "rgba(255,215,0,0.6)", "from": "David Stockton", "title": "Shared Seasons: 1", "to": "DeMarcus Cousins", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "David Stockton", "title": "Shared Seasons: 1", "to": "Donovan Mitchell", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "David Stockton", "title": "Shared Seasons: 1", "to": "Naz Mitrou-Long", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "David Stockton", "title": "Shared Seasons: 1", "to": "Sim Bhullar", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "DeMar DeRozan", "title": "Shared Seasons: 1", "to": "Lou Williams", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "DeMarcus Cousins", "title": "Shared Seasons: 1", "to": "Isaiah Thomas", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "DeMarcus Cousins", "title": "Shared Seasons: 1", "to": "Jimmer Fredette", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "DeMarcus Cousins", "title": "Shared Seasons: 1", "to": "Lou Williams", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "DeMarcus Cousins", "title": "Shared Seasons: 1", "to": "Sim Bhullar", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Devin Booker", "title": "Shared Seasons: 3", "to": "Eric Bledsoe", "value": 3}, {"color": "rgba(255,215,0,0.6)", "from": "Dirk Nowitzki", "title": "Shared Seasons: 1", "to": "Jameel Warney", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Dirk Nowitzki", "title": "Shared Seasons: 1", "to": "Jonathan Gibson", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Donovan Mitchell", "title": "Shared Seasons: 1", "to": "Naz Mitrou-Long", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Dwyane Wade", "title": "Shared Seasons: 1", "to": "Eric Bledsoe", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Dwyane Wade", "title": "Shared Seasons: 2", "to": "Isaiah Thomas", "value": 2}, {"color": "rgba(255,215,0,0.6)", "from": "Dwyane Wade", "title": "Shared Seasons: 1", "to": "Kevin Love", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Dwyane Wade", "title": "Shared Seasons: 2", "to": "LeBron James", "value": 2}, {"color": "rgba(255,215,0,0.6)", "from": "Dwyane Wade", "title": "Shared Seasons: 2", "to": "Michael Beasley", "value": 2}, {"color": "rgba(255,215,0,0.6)", "from": "Enes Freedom", "title": "Shared Seasons: 1", "to": "Isaiah Thomas", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Enes Freedom", "title": "Shared Seasons: 2", "to": "Kevin Durant", "value": 2}, {"color": "rgba(255,215,0,0.6)", "from": "Enes Freedom", "title": "Shared Seasons: 1", "to": "Kristaps Porzi\u0146\u0123is", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Enes Freedom", "title": "Shared Seasons: 1", "to": "Michael Beasley", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Enes Freedom", "title": "Shared Seasons: 3", "to": "Russell Westbrook", "value": 3}, {"color": "rgba(255,215,0,0.6)", "from": "Eric Bledsoe", "title": "Shared Seasons: 2", "to": "Isaiah Thomas", "value": 2}, {"color": "rgba(255,215,0,0.6)", "from": "Isaiah Thomas", "title": "Shared Seasons: 1", "to": "Jimmer Fredette", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Isaiah Thomas", "title": "Shared Seasons: 1", "to": "Kevin Love", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Isaiah Thomas", "title": "Shared Seasons: 1", "to": "LeBron James", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "James Harden", "title": "Shared Seasons: 1", "to": "Lou Williams", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "James Harden", "title": "Shared Seasons: 1", "to": "Michael Beasley", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Jannero Pargo", "title": "Shared Seasons: 2", "to": "Kemba Walker", "value": 2}, {"color": "rgba(255,215,0,0.6)", "from": "Jimmer Fredette", "title": "Shared Seasons: 1", "to": "Kristaps Porzi\u0146\u0123is", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Jimmer Fredette", "title": "Shared Seasons: 1", "to": "Thanasis Antetokounmpo", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Joel Embiid", "title": "Shared Seasons: 1", "to": "Shawn Long", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Jonathan Gibson", "title": "Shared Seasons: 1", "to": "Kyrie Irving", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Kawhi Leonard", "title": "Shared Seasons: 3", "to": "LaMarcus Aldridge", "value": 3}, {"color": "rgba(255,215,0,0.6)", "from": "Kevin Durant", "title": "Shared Seasons: 2", "to": "Klay Thompson", "value": 2}, {"color": "rgba(255,215,0,0.6)", "from": "Kevin Durant", "title": "Shared Seasons: 3", "to": "Russell Westbrook", "value": 3}, {"color": "rgba(255,215,0,0.6)", "from": "Kevin Durant", "title": "Shared Seasons: 2", "to": "Stephen Curry", "value": 2}, {"color": "rgba(255,215,0,0.6)", "from": "Kevin Love", "title": "Shared Seasons: 3", "to": "Kyrie Irving", "value": 3}, {"color": "rgba(255,215,0,0.6)", "from": "Kevin Love", "title": "Shared Seasons: 4", "to": "LeBron James", "value": 4}, {"color": "rgba(255,215,0,0.6)", "from": "Klay Thompson", "title": "Shared Seasons: 1", "to": "MarShon Brooks", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Klay Thompson", "title": "Shared Seasons: 3", "to": "Marreese Speights", "value": 3}, {"color": "rgba(255,215,0,0.6)", "from": "Klay Thompson", "title": "Shared Seasons: 5", "to": "Stephen Curry", "value": 5}, {"color": "rgba(255,215,0,0.6)", "from": "Kobe Bryant", "title": "Shared Seasons: 1", "to": "Lou Williams", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Kobe Bryant", "title": "Shared Seasons: 1", "to": "MarShon Brooks", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Kristaps Porzi\u0146\u0123is", "title": "Shared Seasons: 1", "to": "Michael Beasley", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Kristaps Porzi\u0146\u0123is", "title": "Shared Seasons: 1", "to": "Thanasis Antetokounmpo", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Kyrie Irving", "title": "Shared Seasons: 3", "to": "LeBron James", "value": 3}, {"color": "rgba(255,215,0,0.6)", "from": "LeBron James", "title": "Shared Seasons: 1", "to": "Michael Beasley", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "MarShon Brooks", "title": "Shared Seasons: 1", "to": "Marreese Speights", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "MarShon Brooks", "title": "Shared Seasons: 1", "to": "Stephen Curry", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "MarShon Brooks", "title": "Shared Seasons: 1", "to": "Vince Hunter", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Marreese Speights", "title": "Shared Seasons: 3", "to": "Stephen Curry", "value": 3}, {"color": "rgba(255,215,0,0.6)", "from": "PJ Dozier", "title": "Shared Seasons: 1", "to": "Paul George", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "PJ Dozier", "title": "Shared Seasons: 1", "to": "Russell Westbrook", "value": 1}, {"color": "rgba(255,215,0,0.6)", "from": "Paul George", "title": "Shared Seasons: 1", "to": "Russell Westbrook", "value": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "barnesHut": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.3,
+            "damping": 0.09,
+            "gravitationalConstant": -80000,
+            "springConstant": 0.001,
+            "springLength": 250
+        },
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 120
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
