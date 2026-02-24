@@ -1,5 +1,3 @@
-# nba-player-analysis-visualization
-
 # NBA Player Analysis & Visualization
 
 ## Overview
